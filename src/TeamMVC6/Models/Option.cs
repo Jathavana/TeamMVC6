@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TeamMVC6.Models
 {
-    public class Options
+    public class Option
     {
         public int OptionsId { get; set; }
 
