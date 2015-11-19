@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -15,3 +15,4 @@ namespace TeamMVC6.Models
         public Boolean IsDefault { get; set; }
     }
 }
+
