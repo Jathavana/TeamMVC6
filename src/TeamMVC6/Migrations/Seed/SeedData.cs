@@ -171,11 +171,6 @@ namespace TeamMVC6.Migrations.Seed
                     SelectionDate = DateTime.Now
                 });
 
-
-
-
-
-
                 //Second set of Students
                 context.Choices.Add(new Choice
                 {
