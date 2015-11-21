@@ -1,0 +1,29 @@
+﻿@model TeamMVC6.Models.Choice
+
+@{
+    ViewBag.Title = "Choices - Create Page";
+}
+
+<div>
+    <form asp-controller="Choice" asp-action="Create" method="post">
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="StudentId"></label>
+            <input asp-for="StudentId" class="form-control" placeholder="Student Id" />
+            <span asp-validation-for="StudentId" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="StudentFirstName"></label>
+            <input asp-for="StudentFirstName" class="form-control" placeholder="First Name" />
+            <span asp-validation-for="StudentFirstName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="StudentLastName"></label>
+            <input asp-for="StudentLastName" class="form-control" placeholder="Student Last Name" />
+            <span asp-validation-for="StudentLastName" class="text-danger"></span>
+        </div>
+        
+
+        <input type="submit" class="btn btn-default" value="Create" />
+    </form>
+</div>

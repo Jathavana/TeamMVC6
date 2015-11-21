@@ -1,0 +1,42 @@
+﻿@model IEnumerable<TeamMVC6.Models.Choice>
+
+@{
+    ViewBag.Title = "Choices - Index Page";
+}
+
+<h2>Index</h2>
+@*YearTerm : @Html.DropDownList("Year", (IEnumerable<SelectListItem>)ViewBag.YearTerms)*@
+
+<table class="table">
+    <tr>
+        <th>@Html.DisplayNameFor(model => model.StudentId)</th>
+        <th>@Html.DisplayNameFor(model => model.StudentFirstName)</th>
+        <th>@Html.DisplayNameFor(model => model.StudentLastName)</th>
+        <th>@Html.DisplayNameFor(model => model.YearTerm)</th>
+        <th>@Html.DisplayNameFor(model => model.SelectionDate)</th>
+        <th>@Html.DisplayNameFor(model => model.FirstChoiceOption)</th>
+        <th>@Html.DisplayNameFor(model => model.SecondChoiceOption)</th>
+        <th>@Html.DisplayNameFor(model => model.ThirdChoiceOption)</th>
+        <th>@Html.DisplayNameFor(model => model.FourthChoiceOption)</th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@Html.DisplayFor(modelItem => item.StudentId)</td>
+            <td>@Html.DisplayFor(modelItem => item.StudentFirstName)</td>
+            <td>@Html.DisplayFor(modelItem => item.StudentLastName)</td>
+            <td>@Html.DisplayFor(modelItem => item.YearTerm)</td>
+            <td>@Html.DisplayFor(modelItem => item.SelectionDate)</td>
+            <td>@Html.DisplayFor(modelItem => item.FirstChoiceOption)</td>
+            <td>@Html.DisplayFor(modelItem => item.SecondChoiceOption)</td>
+            <td>@Html.DisplayFor(modelItem => item.ThirdChoiceOption)</td>
+            <td>@Html.DisplayFor(modelItem => item.FourthChoiceOption)</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ChoiceId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ChoiceId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ChoiceId">Delete</a>
+            </td>
+        </tr>
+    }
+</table>
