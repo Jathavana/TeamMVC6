@@ -1,0 +1,27 @@
+﻿@model IEnumerable<TeamMVC6.Models.Option>
+
+@{
+    ViewBag.Title = "Options";
+}
+
+
+<h2>Current Options</h2>
+<p><a asp-action="Create">Create New Options</a></p>
+<table class="table">
+    <tr>
+        <th>@Html.DisplayNameFor(model => model.Title)</th>
+        <th>@Html.DisplayNameFor(model => model.IsActive)</th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@Html.DisplayFor(modelItem => item.Title)</td>
+            <td>@Html.DisplayFor(modelItem => item.IsActive)</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.OptionId">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.OptionId">Delete</a>
+            </td>
+        </tr>
+    }
+</table>
