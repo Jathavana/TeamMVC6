@@ -10,6 +10,7 @@ namespace TeamMVC6.Migrations.Seed
     {
         public static void Initialize(OptionsContext context)
         {
+
             if (!context.Options.Any())
             {
                 context.Options.Add(new Option { Title = "Data Communications", IsActive = true });
