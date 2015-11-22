@@ -1,0 +1,63 @@
+﻿@model IEnumerable<TeamMVC6.Models.YearTerm>
+
+    @{
+        ViewBag.Title = "Index";
+    }
+
+    <h2>Index</h2>
+
+    
+    <p>
+    <a asp-action="Create">Create New Term</a>
+    </p>
+
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Year)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Term)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsDefault)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Year)
+                </td>
+                <td>
+                    @{var season = ""; }
+                    @switch (item.Term)
+                {
+                    case 10:
+                        season = "Winter";
+                        break;
+                    case 20:
+                        season = "Spring/Summer";
+                        break;
+                    case 30:
+                        season = "Fall";
+                        break;
+                    default:
+                        season = "null";
+                        break;
+                }
+                    @Html.DisplayFor(modelItem => season)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsDefault)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.YearTermId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.YearTermId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.YearTermId">Delete</a>
+                </td>
+            </tr>
+        }
+</table>

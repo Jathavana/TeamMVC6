@@ -10,6 +10,7 @@ namespace TeamMVC6.Migrations.Seed
     {
         public static void Initialize(OptionsContext context)
         {
+
             if (!context.Options.Any())
             {
                 context.Options.Add(new Option { Title = "Data Communications", IsActive = true });
@@ -170,11 +171,6 @@ namespace TeamMVC6.Migrations.Seed
                     FourthChoiceOptionId = 3,
                     SelectionDate = DateTime.Now
                 });
-
-
-
-
-
 
                 //Second set of Students
                 context.Choices.Add(new Choice
