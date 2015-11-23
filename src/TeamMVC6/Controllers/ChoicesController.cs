@@ -32,6 +32,7 @@ namespace TeamMVC6.Controllers
         public ActionResult Create()
         {
             ViewBag.Items = GetChoicesListItems();
+
             return View();
         }
 
@@ -90,6 +91,7 @@ namespace TeamMVC6.Controllers
             }
 
             ViewBag.Items = GetChoicesListItems(choice.ChoiceId);
+
             return View(choice);
         }
 

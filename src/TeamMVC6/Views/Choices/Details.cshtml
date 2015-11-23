@@ -1,0 +1,32 @@
+﻿@model TeamMVC6.Models.Choice
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+<div>
+    <dl class="dl-horizontal">
+        <dt>@Html.DisplayNameFor(model => model.StudentFirstName)</dt>
+        <dd>@Html.DisplayFor(model => model.StudentFirstName)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.StudentLastName)</dt>
+        <dd>@Html.DisplayFor(model => model.StudentLastName)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.FirstChoiceOptionId)</dt>
+        <dd>@Html.DisplayFor(model => model.FirstChoiceOptionId)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.SecondChoiceOptionId)</dt>
+        <dd>@Html.DisplayFor(model => model.SecondChoiceOptionId)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.ThirdChoiceOptionId)</dt>
+        <dd>@Html.DisplayFor(model => model.ThirdChoiceOptionId)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.FourthChoiceOptionId)</dt>
+        <dd>@Html.DisplayFor(model => model.FourthChoiceOptionId)</dd>
+    </dl>
+</div>
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.ChoiceId">Edit</a> |
+    <a asp-action="Index">Back to List of Students and their Choices</a>
+</p>
