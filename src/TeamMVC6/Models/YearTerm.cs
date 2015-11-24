@@ -9,9 +9,12 @@ namespace TeamMVC6.Models
     public class YearTerm
     {
         public int YearTermId { get; set; }
+        [Range(2015, 3000)]
         public int Year { get; set; }
-        [RegularExpression(@"(30)|(20)|(10)$", ErrorMessage = "Please enter a valid Term")]
+        [UIHint("_SeasonDropDown")]
         public int Term { get; set; }
+
+        [Display(Name = "Default")]
         public Boolean IsDefault { get; set; }
     }
 }

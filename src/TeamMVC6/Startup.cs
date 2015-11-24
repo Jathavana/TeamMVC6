@@ -84,10 +84,11 @@ namespace TeamMVC6
             // Register application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+            services.AddTransient<TestIdentity>();
         }
 
         // Configure is called after ConfigureServices is called.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public async void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, TestIdentity testIdentity)
         {
             loggerFactory.MinimumLevel = LogLevel.Information;
             loggerFactory.AddConsole();
@@ -141,6 +142,9 @@ namespace TeamMVC6
                 var context = serviceScope.ServiceProvider.GetService<OptionsContext>();
 
                 SeedData.Initialize(context);
+
+                var test = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                await testIdentity.InitializeDataAsync();
             }
         }
     }
