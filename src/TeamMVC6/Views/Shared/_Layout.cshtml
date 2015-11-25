@@ -38,6 +38,11 @@
                         <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
                         <li><a asp-controller="Options" asp-action="Index">Option</a></li>
                         <li><a asp-controller="YearTerms" asp-action="Index">Term</a></li>
+
+                        @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                        {
+                            <li><a asp-controller="Users" asp-action="Index">Users</a></li>
+                        }
                     </ul>
                     @await Html.PartialAsync("_LoginPartial")
                 </div>

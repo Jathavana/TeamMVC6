@@ -9,8 +9,10 @@ namespace TeamMVC6.ViewModels.Account
     public class LoginViewModel
     {
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+        [MaxLength(9)]
+        [RegularExpression(@"^A00\d{6}$", ErrorMessage = "Proper format is: A00######")]
+        [Display(Name = "Student Number")]
+        public string UserName { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

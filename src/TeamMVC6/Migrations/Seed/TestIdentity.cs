@@ -38,7 +38,7 @@ namespace TeamMVC6.Migrations.Seed
             var admin = await _userManager.FindByEmailAsync("a@a.a");
             if (admin == null)
             {
-                admin = new ApplicationUser { UserName = "Administrator", Email = "a@a.a" };
+                admin = new ApplicationUser { UserName = "A00111111", Email = "a@a.a" };
                 await _userManager.CreateAsync(admin, "P@$$w0rd");
             }
             if (!await _roleManager.RoleExistsAsync("Admin"))
@@ -50,7 +50,7 @@ namespace TeamMVC6.Migrations.Seed
             var student = await _userManager.FindByEmailAsync("b@b.b");
             if (student == null)
             {
-                student = new ApplicationUser { UserName = "Student", Email = "b@b.b" };
+                student = new ApplicationUser { UserName = "A00222222", Email = "b@b.b" };
                 await _userManager.CreateAsync(student, "P@$$w0rd");
             }
             if (!await _roleManager.RoleExistsAsync("Student"))
