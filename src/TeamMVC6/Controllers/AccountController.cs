@@ -16,7 +16,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 namespace TeamMVC6.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : Controller 
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
