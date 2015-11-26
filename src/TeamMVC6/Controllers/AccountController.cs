@@ -11,6 +11,7 @@ using Microsoft.Data.Entity;
 using TeamMVC6.Models;
 using TeamMVC6.Services;
 using TeamMVC6.ViewModels.Account;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace TeamMVC6.Controllers
 {
@@ -36,7 +37,7 @@ namespace TeamMVC6.Controllers
             _emailSender = emailSender;
             _smsSender = smsSender;
             _applicationDbContext = applicationDbContext;
-        }
+    }
 
         //
         // GET: /Account/Login
