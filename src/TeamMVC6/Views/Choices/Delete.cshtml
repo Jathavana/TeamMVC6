@@ -1,0 +1,44 @@
+﻿@model TeamMVC6.Models.Choice
+
+@{
+    ViewBag.Title = "Confirm Delete";
+}
+
+<h3>Are you sure you want to delete this?</h3>
+
+@if (ViewBag.Retry)
+{
+    <p class="alert alert-danger">Error deleting. Retry?</p>
+}
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>@Html.DisplayNameFor(model => model.StudentFirstName)</dt>
+        <dd>@Html.DisplayFor(model => model.StudentFirstName)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.StudentLastName)</dt>
+        <dd>@Html.DisplayFor(model => model.StudentLastName)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.FirstChoiceOptionId)</dt>
+        <dd>@Html.DisplayFor(model => model.FirstChoiceOption.Title)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.SecondChoiceOptionId)</dt>
+        <dd>@Html.DisplayFor(model => model.SecondChoiceOption.Title)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.ThirdChoiceOptionId)</dt>
+        <dd>@Html.DisplayFor(model => model.ThirdChoiceOption.Title)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.FourthChoiceOptionId)</dt>
+        <dd>@Html.DisplayFor(model => model.FourthChoiceOption.Title)</dd>
+    </dl>
+
+    <div>
+        <form asp-controller="Choice" asp-action="Delete" method="post">
+            <div class="form-group">
+                <input type="submit" class="btn btn-default" value="Delete" />
+            </div>
+        </form>
+
+        <p><a asp-controller="Choices" asp-action="Index">Back to List of Students and their Choices</a></p>
+    </div>
+</div>
