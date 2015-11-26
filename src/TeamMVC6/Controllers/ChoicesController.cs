@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Mvc;
+﻿using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using Microsoft.Framework.Logging;
@@ -18,20 +19,35 @@ namespace TeamMVC6.Controllers
         public ILogger<ChoicesController> Logger { get; set; }
 
         public ChoicesController(OptionsContext context)
-        {
+        { 
             _context = context;
         }
 
         // GET: Choices
         public IActionResult Index()
         {
-            return View(_context.Choices.ToList());
+            var choices = _context
+                .Choices
+                .Include(y => y.YearTerm)
+                .Include(c => c.FirstChoiceOption)
+                .Include(c => c.SecondChoiceOption)
+                .Include(c => c.ThirdChoiceOption)
+                .Include(c => c.FourthChoiceOption)
+                .Where(c => c.YearTermId == _context.YearTerms
+                .Where(y => y.IsDefault == true)
+                .Select(y => y.YearTermId)
+                .FirstOrDefault());
+
+            return View(choices.ToList());
         }
 
         // GET: Choices/Create
         public ActionResult Create()
         {
-            ViewBag.Items = GetChoicesListItems();
+            ViewBag.FirstChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
+            ViewBag.FourthChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
+            ViewBag.SecondChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
+            ViewBag.ThirdChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
 
             return View();
         }
@@ -39,7 +55,12 @@ namespace TeamMVC6.Controllers
         // GET: Choices/Details
         public ActionResult Details(int id)
         {
+
             Choice choice = _context.Choices
+                .Include(c => c.FirstChoiceOption)
+                .Include(c => c.SecondChoiceOption)
+                .Include(c => c.ThirdChoiceOption)
+                .Include(c => c.FourthChoiceOption)
                 .Where(b => b.ChoiceId == id)
                 .FirstOrDefault();
             if (choice == null)
@@ -70,14 +91,40 @@ namespace TeamMVC6.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Choice choice)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Choices.Add(choice);
-                await _context.SaveChangesAsync();
+            var defaultTermId = _context.YearTerms.Where(c => c.IsDefault == true).First().YearTermId;
+            var checkStudentId = _context.Choices.Where(c => c.StudentId == choice.StudentId);
 
-                return RedirectToAction("Index");
+            if (checkStudentId.Where(c => c.YearTermId == defaultTermId).Count() != 0)
+            {
+                ViewBag.FirstChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title", choice.FirstChoiceOptionId);
+                ViewBag.FourthChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title", choice.FourthChoiceOptionId);
+                ViewBag.SecondChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title", choice.SecondChoiceOptionId);
+                ViewBag.ThirdChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title", choice.ThirdChoiceOptionId);
+                ModelState.AddModelError(string.Empty, "You have already registered for this term");
+
+                return View(choice);
             }
-            return View(choice);
+            if (choice.FirstChoiceOptionId == choice.SecondChoiceOptionId
+               || choice.FirstChoiceOptionId == choice.ThirdChoiceOptionId
+               || choice.FirstChoiceOptionId == choice.FourthChoiceOptionId
+               || choice.SecondChoiceOptionId == choice.ThirdChoiceOptionId
+               || choice.SecondChoiceOptionId == choice.FourthChoiceOptionId
+               || choice.ThirdChoiceOptionId == choice.FourthChoiceOptionId)
+            {
+                ViewBag.FirstChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title", choice.FirstChoiceOptionId);
+                ViewBag.FourthChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title", choice.FourthChoiceOptionId);
+                ViewBag.SecondChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title", choice.SecondChoiceOptionId);
+                ViewBag.ThirdChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title", choice.ThirdChoiceOptionId);
+                ModelState.AddModelError(string.Empty, "Cannot have duplicate selections!");
+
+                return View(choice);
+            }
+            choice.YearTermId = defaultTermId;
+            choice.SelectionDate = DateTime.Now;
+            _context.Choices.Add(choice);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
         }
 
         // GET: Choices/Edit
@@ -91,6 +138,11 @@ namespace TeamMVC6.Controllers
             }
 
             ViewBag.Items = GetChoicesListItems(choice.ChoiceId);
+            ViewBag.FirstChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
+            ViewBag.FourthChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
+            ViewBag.SecondChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
+            ViewBag.ThirdChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
+            //ViewBag.YearTermId = new SelectList(_context.YearTerms, "YearTermId", "YearTermId");
 
             return View(choice);
         }
@@ -100,18 +152,46 @@ namespace TeamMVC6.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int id, Choice choice)
         {
+            if (_context.YearTerms.Where(c => c.IsDefault).Count() != 0)
+            {
+                choice.YearTermId = _context.YearTerms.Where(c => c.IsDefault == true).First().YearTermId;
+            }
             try
             {
+                if (choice.FirstChoiceOptionId == choice.SecondChoiceOptionId
+                       || choice.FirstChoiceOptionId == choice.ThirdChoiceOptionId
+                       || choice.FirstChoiceOptionId == choice.FourthChoiceOptionId
+                       || choice.SecondChoiceOptionId == choice.ThirdChoiceOptionId
+                       || choice.SecondChoiceOptionId == choice.FourthChoiceOptionId
+                       || choice.ThirdChoiceOptionId == choice.FourthChoiceOptionId)
+                {
+                    ViewBag.FirstChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title", choice.FirstChoiceOptionId);
+                    ViewBag.FourthChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title", choice.FourthChoiceOptionId);
+                    ViewBag.SecondChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title", choice.SecondChoiceOptionId);
+                    ViewBag.ThirdChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title", choice.ThirdChoiceOptionId);
+                    ModelState.AddModelError(string.Empty, "Cannot have duplicate selections!");
+
+                    return View(choice);
+                }
+                var studentId = _context.Choices.Where(c => c.ChoiceId == id).Select(c => c.StudentId).FirstOrDefault();
                 choice.ChoiceId = id;
+                choice.StudentId = studentId;
+                choice.SelectionDate = DateTime.Now;
                 _context.Choices.Attach(choice);
                 _context.Entry(choice).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, "Unable to save changes.");
+                Console.WriteLine(ex);
+                
             }
+            ViewBag.FirstChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
+            ViewBag.FourthChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
+            ViewBag.SecondChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
+            ViewBag.ThirdChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
             return View(choice);
         }
 
@@ -125,7 +205,13 @@ namespace TeamMVC6.Controllers
         [ActionName("Delete")]
         public async Task<ActionResult> ConfirmDelete(int id, bool? retry)
         {
-            Choice choice = await FindChoiceAsync(id);
+            Choice choice = _context.Choices
+               .Include(c => c.FirstChoiceOption)
+               .Include(c => c.SecondChoiceOption)
+               .Include(c => c.ThirdChoiceOption)
+               .Include(c => c.FourthChoiceOption)
+               .Where(b => b.ChoiceId == id)
+               .FirstOrDefault();
             if (choice == null)
             {
                 Logger.LogInformation("Delete: Item not found {0}", id);

@@ -13,7 +13,7 @@
         <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
         <div class="form-group">
             <label asp-for="StudentId"></label>
-            <input asp-for="StudentId" class="form-control" placeholder="Student Id" readonly="readonly"/>
+            <input asp-for="StudentId" class="form-control" placeholder="Student Id"/>
             <span asp-validation-for="StudentId" class="text-danger"></span>
         </div>
 
@@ -31,50 +31,26 @@
 
         <div class="form-group">
             <label asp-for="FirstChoiceOptionId"></label>
-            <select asp-for="FirstChoiceOptionId" class="form-control">
-                <option selected="selected">Choose an Option...</option>
-                <option value="CS">Client Server</option>
-                <option value="DP">Digital Processing</option>
-                <option value="IS">Information Systems</option>
-                <option value="WM">Web & Mobile</option>
-                <option value="DC">Data Communications</option>
-            </select>
+            <select asp-for="FirstChoiceOptionId" asp-items="ViewBag.FirstChoiceOptionId" class="form-control"></select>
+            <span asp-validation-for="FirstChoiceOptionId" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="SecondChoiceOptionId"></label>
-            <select asp-for="SecondChoiceOptionId" class="form-control">
-                <option selected="selected">Choose an Option...</option>
-                <option value="CS">Client Server</option>
-                <option value="DP">Digital Processing</option>
-                <option value="IS">Information Systems</option>
-                <option value="WM">Web & Mobile</option>
-                <option value="DC">Data Communications</option>
-            </select>
+            <select asp-for="SecondChoiceOptionId" asp-items="ViewBag.SecondChoiceOptionId" class="form-control"></select>
+            <span asp-validation-for="SecondChoiceOptionId" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="ThirdChoiceOptionId"></label>
-            <select asp-for="ThirdChoiceOptionId" class="form-control">
-                <option selected="selected">Choose an Option...</option>
-                <option value="CS">Client Server</option>
-                <option value="DP">Digital Processing</option>
-                <option value="IS">Information Systems</option>
-                <option value="WM">Web & Mobile</option>
-                <option value="DC">Data Communications</option>
-            </select>
+            <select asp-for="ThirdChoiceOptionId" asp-items="ViewBag.ThirdChoiceOptionId" class="form-control"></select>
+            <span asp-validation-for="ThirdChoiceOptionId" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="FourthChoiceOptionId"></label>
-            <select asp-for="FourthChoiceOptionId" class="form-control">
-                <option selected="selected">Choose an Option...</option>
-                <option value="CS">Client Server</option>
-                <option value="DP">Digital Processing</option>
-                <option value="IS">Information Systems</option>
-                <option value="WM">Web & Mobile</option>
-                <option value="DC">Data Communications</option>
-            </select>
+            <select asp-for="FourthChoiceOptionId" asp-items="ViewBag.FourthChoiceOptionId" class="form-control"></select>
+            <span asp-validation-for="FourthChoiceOptionId" class="text-danger"></span>
         </div>
 
         <input type="submit" class="btn btn-default" value="Create" />

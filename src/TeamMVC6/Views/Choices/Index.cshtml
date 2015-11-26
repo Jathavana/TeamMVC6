@@ -25,12 +25,12 @@
             <td>@Html.DisplayFor(modelItem => item.StudentId)</td>
             <td>@Html.DisplayFor(modelItem => item.StudentFirstName)</td>
             <td>@Html.DisplayFor(modelItem => item.StudentLastName)</td>
-            <td>@Html.DisplayFor(modelItem => item.YearTermId)</td>
+            <td>@Html.DisplayFor(modelItem => item.YearTerm.Year)@Html.DisplayFor(modelItem => item.YearTerm.Term)</td>
             <td>@Html.DisplayFor(modelItem => item.SelectionDate)</td>
-            <td>@Html.DisplayFor(modelItem => item.FirstChoiceOptionId)</td>
-            <td>@Html.DisplayFor(modelItem => item.SecondChoiceOptionId)</td>
-            <td>@Html.DisplayFor(modelItem => item.ThirdChoiceOptionId)</td>
-            <td>@Html.DisplayFor(modelItem => item.FourthChoiceOptionId)</td>
+            <td>@Html.DisplayFor(modelItem => item.FirstChoiceOption.Title)</td>
+            <td>@Html.DisplayFor(modelItem => item.SecondChoiceOption.Title)</td>
+            <td>@Html.DisplayFor(modelItem => item.ThirdChoiceOption.Title)</td>
+            <td>@Html.DisplayFor(modelItem => item.FourthChoiceOption.Title)</td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ChoiceId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.ChoiceId">Details</a> |

@@ -9,7 +9,7 @@
 <hr />
 
 <div>
-    <form asp-controller="Choice" asp-action="Update" method="post" 
+    <form asp-controller="Choice" asp-action="Update" method="post"
           asp-route-id="@Model.ChoiceId">
         <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
 
@@ -24,28 +24,28 @@
             <input asp-for="StudentLastName" class="form-control" />
             <span asp-validation-for="StudentLastName" class="text-danger"></span>
         </div>
-        
+
         <div class="form-group">
             <label asp-for="FirstChoiceOptionId"></label>
-            <input asp-for="FirstChoiceOptionId" class="form-control" />
+            <select asp-for="FirstChoiceOptionId" asp-items="ViewBag.FirstChoiceOptionId" class="form-control"></select>
             <span asp-validation-for="FirstChoiceOptionId" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="SecondChoiceOptionId"></label>
-            <input asp-for="SecondChoiceOptionId" class="form-control" />
+            <select asp-for="SecondChoiceOptionId" asp-items="ViewBag.SecondChoiceOptionId" class="form-control"></select>
             <span asp-validation-for="SecondChoiceOptionId" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="ThirdChoiceOptionId"></label>
-            <input asp-for="ThirdChoiceOptionId" class="form-control" />
+            <select asp-for="ThirdChoiceOptionId" asp-items="ViewBag.ThirdChoiceOptionId" class="form-control"></select>
             <span asp-validation-for="ThirdChoiceOptionId" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="FourthChoiceOptionId"></label>
-            <input asp-for="FourthChoiceOptionId" class="form-control" />
+            <select asp-for="FourthChoiceOptionId" asp-items="ViewBag.FourthChoiceOptionId" class="form-control"></select>
             <span asp-validation-for="FourthChoiceOptionId" class="text-danger"></span>
         </div>
 
