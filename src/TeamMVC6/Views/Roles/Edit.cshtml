@@ -5,3 +5,26 @@
 }
 
 <h2>@ViewBag.test</h2>
+<p>
+    @Html.ActionLink("Add", "AddUserToRole", new { roleId = Model.Id })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Users.First().UserId)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Users)
+    {
+        <tr>
+            <td>
+                @ViewBag.UserDictionary[item.UserId]
+            </td>
+            <td>
+                @Html.ActionLink("Remove", "RemoveUserFromRole", new { roleId = item.RoleId, userId = item.UserId })
+            </td>
+        </tr>
+    }
+</table>
