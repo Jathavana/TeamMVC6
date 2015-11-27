@@ -16,9 +16,10 @@ using Microsoft.AspNet.Identity.EntityFramework;
 namespace TeamMVC6.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : Controller 
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
@@ -27,12 +28,14 @@ namespace TeamMVC6.Controllers
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
             ISmsSender smsSender,
             ApplicationDbContext applicationDbContext)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _smsSender = smsSender;
@@ -62,7 +65,7 @@ namespace TeamMVC6.Controllers
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     return RedirectToLocal(returnUrl);
@@ -105,10 +108,18 @@ namespace TeamMVC6.Controllers
             EnsureDatabaseCreated(_applicationDbContext);
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    // Set LockoutEnabled to false by default
+                    await _userManager.SetLockoutEnabledAsync(user, false);
+
+                    // Add Student role by default
+                    if (await _roleManager.RoleExistsAsync("Student"))
+                    {
+                        await _userManager.AddToRoleAsync(user, "Student");
+                    }
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
                     //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
