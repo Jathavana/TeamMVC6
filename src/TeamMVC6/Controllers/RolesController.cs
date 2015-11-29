@@ -9,11 +9,13 @@ using System.Net;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
+using Microsoft.AspNet.Authorization;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace TeamMVC6.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class RolesController : Controller
     {
         private ApplicationDbContext _context { get; set; }

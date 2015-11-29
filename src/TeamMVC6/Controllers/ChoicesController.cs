@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Http;
+﻿using Microsoft.AspNet.Authorization;
+using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
@@ -12,6 +13,7 @@ using TeamMVC6.Models;
 
 namespace TeamMVC6.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ChoicesController : Controller 
     {
         public OptionsContext _context { get; set; }
@@ -110,6 +112,7 @@ namespace TeamMVC6.Controllers
         }
 
         // GET: Choices/Create
+        [Authorize(Roles ="Admin, Student")]
         public ActionResult Create()
         {
             ViewBag.FirstChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");

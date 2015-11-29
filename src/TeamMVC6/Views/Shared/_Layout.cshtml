@@ -34,21 +34,20 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li><a asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li><a asp-controller="Choices" asp-action="Index">Choices</a></li>
-                        <li><a asp-controller="Options" asp-action="Index">Option</a></li>
-                        <li><a asp-controller="YearTerms" asp-action="Index">Term</a></li>
 
+                        @if (ViewContext.HttpContext.User.IsInRole("Student"))
+                        {
+                            <li><a asp-controller="Choices" asp-action="Create">Choices</a></li>
+                        }
 
-                        @*@if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                        @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                         {
                             <li><a asp-controller="Choices" asp-action="Index">Choices</a></li>
                             <li><a asp-controller="Options" asp-action="Index">Option</a></li>
                             <li><a asp-controller="YearTerms" asp-action="Index">Term</a></li>
                             <li><a asp-controller="Users" asp-action="Index">Users</a></li>
                             <li><a asp-controller="Roles" asp-action="Index">Roles</a></li>
-                        }*@
-                        <li><a asp-controller="Users" asp-action="Index">Users</a></li>
-                        <li><a asp-controller="Roles" asp-action="Index">Roles</a></li>
+                        }
 
                     </ul>
                     @await Html.PartialAsync("_LoginPartial")

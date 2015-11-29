@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using Microsoft.AspNet.Authorization;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Framework.Logging;
 using System;
@@ -8,6 +9,7 @@ using TeamMVC6.Models;
 
 namespace TeamMVC6.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private ApplicationDbContext _context { get; set; }
