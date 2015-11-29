@@ -14,7 +14,7 @@ using TeamMVC6.Models;
 
 namespace TeamMVC6.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class ChoicesController : Controller 
     {
         public OptionsContext _context { get; set; }
@@ -28,8 +28,10 @@ namespace TeamMVC6.Controllers
         }
 
         // GET: Choices
+        [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
+
             var choices = _context
                 .Choices
                 .Include(y => y.YearTerm)
@@ -63,8 +65,10 @@ namespace TeamMVC6.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public ActionResult GetChoices(int Id)
         {
+      
             var choices = _context
                     .Choices
                      .Include(y => y.YearTerm)
@@ -113,7 +117,8 @@ namespace TeamMVC6.Controllers
         }
 
         // GET: Choices/Create
-        [Authorize(Roles ="Admin, Student")]
+        [Authorize(Roles = "Student")]
+
         public ActionResult Create()
         {
             Choice currentUser = new Choice();
@@ -128,6 +133,7 @@ namespace TeamMVC6.Controllers
         }
 
         // GET: Choices/Details
+        [Authorize(Roles = "Admin")]
         public ActionResult Details(int id)
         {
 
@@ -164,6 +170,7 @@ namespace TeamMVC6.Controllers
         // POST: Choices/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Student")]
         public async Task<ActionResult> Create(Choice choice)
         {
             var defaultTermId = _context.YearTerms.Where(c => c.IsDefault == true).First().YearTermId;
@@ -199,10 +206,11 @@ namespace TeamMVC6.Controllers
             _context.Choices.Add(choice);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Choices/Edit
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit(int id)
         {
             Choice choice = await FindChoiceAsync(id);
@@ -225,6 +233,7 @@ namespace TeamMVC6.Controllers
         // POST: Choices/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit(int id, Choice choice)
         {
             if (_context.YearTerms.Where(c => c.IsDefault).Count() != 0)
@@ -278,6 +287,7 @@ namespace TeamMVC6.Controllers
         // GET: Choices/Delete
         [HttpGet]
         [ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> ConfirmDelete(int id, bool? retry)
         {
             Choice choice = _context.Choices
@@ -299,6 +309,7 @@ namespace TeamMVC6.Controllers
         // POST: Choices/Delete
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int id)
         {
             try
