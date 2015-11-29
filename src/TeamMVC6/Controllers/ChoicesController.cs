@@ -4,6 +4,7 @@ using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using Microsoft.Framework.Logging;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,12 +34,79 @@ namespace TeamMVC6.Controllers
                 .Include(c => c.SecondChoiceOption)
                 .Include(c => c.ThirdChoiceOption)
                 .Include(c => c.FourthChoiceOption)
-                .Where(c => c.YearTermId == _context.YearTerms
-                .Where(y => y.IsDefault == true)
-                .Select(y => y.YearTermId)
-                .FirstOrDefault());
+                .Where(c => c.YearTermId == _context.YearTerms.Where(y => y.IsDefault == true).Select(y => y.YearTermId).FirstOrDefault());
 
-            return View(choices.ToList());
+            var allYearTerms = _context.YearTerms.Select(c => c.YearTermId);
+            List<object> yearTermList = new List<object>();
+            var defaultYearTerm = _context.YearTerms.Where(c => c.IsDefault == true).Select(c => c.YearTermId).FirstOrDefault();
+
+            foreach(var yearterm in allYearTerms)
+            {
+                var yearTermQuery = _context.YearTerms.Where(c => c.YearTermId == yearterm).FirstOrDefault();
+                var name = yearTermQuery.Year + " " 
+                    + (yearTermQuery.Term == 10 ? "Winter" : 
+                    yearTermQuery.Term == 20 ? "Spring/Summer" : 
+                    yearTermQuery.Term == 30 ? "Fall" : "Default");
+                yearTermList.Add(new
+                {
+                    Id = yearterm,
+                    Name = name
+                });
+            }
+            ViewBag.slItems = new SelectList(yearTermList, "Id", "Name" , defaultYearTerm);
+            ViewBag.Options = getOptionsData();
+            ViewBag.test = defaultYearTerm;
+            return View(choices);
+        }
+
+        [HttpGet]
+        public ActionResult GetChoices(int Id)
+        {
+            var choices = _context
+                    .Choices
+                     .Include(y => y.YearTerm)
+                    .Include(c => c.FirstChoiceOption)
+                    .Include(c => c.FourthChoiceOption)
+                    .Include(c => c.SecondChoiceOption)
+                    .Include(c => c.ThirdChoiceOption)
+                    .Where(c => c.YearTermId == Id);
+            ViewBag.Options = getOptionsData(Id);
+
+            return PartialView("_IndexPartial", choices);
+            
+        }
+
+        public IDictionary<string, int> getOptionsData(int id = 0)
+        {
+            var currentId = 0;
+            if (id == 0)
+            {
+                currentId = _context.YearTerms.Where(y => y.IsDefault == true).Select(y => y.YearTermId).FirstOrDefault();
+            }
+            else
+            {
+                currentId = id;
+            }
+            Dictionary<string, int> data = new Dictionary<string, int>();
+            var availableOptions = _context.Options.Where(c => c.IsActive == true).Select(c => c.OptionId);
+            var availableOptionsTitles = _context.Options.Where(c => c.IsActive == true).Select(c => c.Title);
+            var sum = 0;
+            var count = 0;
+            int[] optionsList = availableOptions.ToArray();
+            string[] optionsTitles = availableOptionsTitles.ToArray();
+
+            foreach (var options in optionsList)
+            {
+                sum = 0;
+                sum += _context.Choices.Where(c => c.FirstChoiceOptionId == options).Where(c => c.YearTermId == currentId).Count();
+                sum += _context.Choices.Where(c => c.SecondChoiceOptionId == options).Where(c => c.YearTermId == currentId).Count();
+                sum += _context.Choices.Where(c => c.ThirdChoiceOptionId == options).Where(c => c.YearTermId == currentId).Count();
+                sum += _context.Choices.Where(c => c.FourthChoiceOptionId == options).Where(c => c.YearTermId == currentId).Count();
+                data.Add(optionsTitles[count], sum);
+                count++;
+            }
+
+            return data;
         }
 
         // GET: Choices/Create
