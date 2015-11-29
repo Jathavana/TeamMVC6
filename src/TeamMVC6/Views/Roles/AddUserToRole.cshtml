@@ -1,0 +1,16 @@
+﻿@model Microsoft.AspNet.Identity.EntityFramework.IdentityRole
+
+@{
+    ViewBag.Title = "AddUser";
+}
+
+<h2>Add User To @Model.Name</h2>
+<h3 style="color:red;">@ViewBag.InUse</h3>
+
+@using (Html.BeginForm("AddUserToRoleSubmit", "Roles", new { roleId = Model.Id }))
+{
+    @Html.DropDownList("ddlUsers",
+    (IEnumerable<SelectListItem>)ViewBag.Users)
+    //"Select a User")
+    <input type="submit" value="Add" class="btn btn-default" />
+}

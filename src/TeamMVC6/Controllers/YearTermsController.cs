@@ -19,10 +19,11 @@ using TeamMVC6.Models;
 using TeamMVC6.Services;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
+using Microsoft.AspNet.Authorization;
 
 namespace TeamMVC6.Controllers
 {
-
+    [Authorize(Roles = "Admin")]
     public class YearTermsController : Controller
     {
         private OptionsContext _context { get; set; }

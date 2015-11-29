@@ -4,4 +4,28 @@
     ViewBag.Title = "Edit";
 }
 
-<h2>@ViewBag.test</h2>
+<h2>Edit @Model</h2>
+<h3 style="color:red;">@ViewBag.confirm</h3>
+<p>
+    @Html.ActionLink("Add", "AddUserToRole", new { roleId = Model.Id })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Users.First().UserId)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in ViewBag.usersInRole.Result)
+    {
+        <tr>
+            <td>
+                @ViewBag.UserDictionary[item.Id]
+            </td>
+            <td>
+                @Html.ActionLink("Remove", "RemoveUserFromRole", new { roleId = Model.Id, userId = item.Id })
+            </td>
+        </tr>
+    }
+</table>

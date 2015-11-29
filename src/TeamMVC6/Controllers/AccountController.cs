@@ -112,9 +112,17 @@ namespace TeamMVC6.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    var id = _applicationDbContext.Roles.Where(c => c.Name == "Student").First().Id;
+                    _applicationDbContext.Roles
+                        .Where(c => c.Name == "Student").First()
+                        .Users
+                        .Add(new IdentityUserRole<String>
+                        {
+                            RoleId = id,
+                            UserId = user.Id
+                        });
                     // Set LockoutEnabled to false by default
                     await _userManager.SetLockoutEnabledAsync(user, false);
-
                     // Add Student role by default
                     if (await _roleManager.RoleExistsAsync("Student"))
                     {
@@ -126,6 +134,9 @@ namespace TeamMVC6.Controllers
                     //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Context.Request.Scheme);
                     //await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
                     //    "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+
+                    await _applicationDbContext.SaveChangesAsync();
+
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction(nameof(HomeController.Index), "Home");
                 }

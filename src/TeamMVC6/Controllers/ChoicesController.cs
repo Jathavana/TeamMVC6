@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Http;
+﻿using Microsoft.AspNet.Authorization;
+using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
@@ -7,11 +8,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TeamMVC6.Models;
 
 namespace TeamMVC6.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ChoicesController : Controller 
     {
         public OptionsContext _context { get; set; }
@@ -110,14 +113,18 @@ namespace TeamMVC6.Controllers
         }
 
         // GET: Choices/Create
+        [Authorize(Roles ="Admin, Student")]
         public ActionResult Create()
         {
+            Choice currentUser = new Choice();
+            currentUser.StudentId = User.GetUserName();
+
             ViewBag.FirstChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
             ViewBag.FourthChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
             ViewBag.SecondChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
             ViewBag.ThirdChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
 
-            return View();
+            return View(currentUser);
         }
 
         // GET: Choices/Details

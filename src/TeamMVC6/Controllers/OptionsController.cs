@@ -7,12 +7,14 @@ using TeamMVC6.Models;
 using System.Net;
 using Microsoft.Framework.Logging;
 using Microsoft.Data.Entity;
+using Microsoft.AspNet.Authorization;
 
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace TeamMVC6.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class OptionsController : Controller
     {
         private OptionsContext _context { get; set; }
