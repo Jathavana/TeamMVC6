@@ -19,7 +19,7 @@ namespace TeamMVC6.Models
 
         [Required]
         [Display(Name = "Student ID")]
-        [RegularExpression("[Aa]00\\d{6}", ErrorMessage = "Invalid Student ID, A00123456 is the expected format")]
+        [RegularExpression("[Aa]00\\d{6}", ErrorMessage = "Invalid Student ID, A00###### is the expected format")]
         public string StudentId { get; set; }
 
         [Required]
