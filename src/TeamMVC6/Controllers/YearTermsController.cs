@@ -59,16 +59,6 @@ namespace TeamMVC6.Controllers
             if (ModelState.IsValid)
             {
 
-                if (yearTerm.Year < DateTime.Now.Year)
-                {
-                    ModelState.AddModelError("", "Invalid Year.");
-                    ViewBag.yearForms = new SelectList(new List<Object> {
-                                        new { value = 10, text = "Spring" },
-                                        new { value = 20, text = "Summer/Fall" },
-                                        new { value = 30, text = "Winter" } },
-                                        "value", "text", 2);
-                    return View(yearTerm);
-                }
                 if (yearTerm.IsDefault == true)
                 {
                     var formerActiveYearTerm = (_context.YearTerms
