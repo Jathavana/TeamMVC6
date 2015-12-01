@@ -9,7 +9,7 @@ namespace TeamMVC6.Models
     public class YearTerm
     {
         public int YearTermId { get; set; }
-        [Range(2015, 3000)]
+        //[Range(2015, 3000)]
         public int Year { get; set; }
         [UIHint("_SeasonDropDown")]
         public int Term { get; set; }

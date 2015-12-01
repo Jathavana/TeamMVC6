@@ -7,12 +7,14 @@ using TeamMVC6.Models;
 using System.Net;
 using Microsoft.Framework.Logging;
 using Microsoft.Data.Entity;
+using Microsoft.AspNet.Authorization;
 
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace TeamMVC6.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class OptionsController : Controller
     {
         private OptionsContext _context { get; set; }
@@ -155,6 +157,15 @@ namespace TeamMVC6.Controllers
             try
             {
                 Option option = await FindOptionAsync(id);
+                var choices = _context.Choices.Where(c => 
+                c.FirstChoiceOptionId == option.OptionId 
+                || c.SecondChoiceOptionId == option.OptionId 
+                || c.ThirdChoiceOptionId == option.OptionId
+                || c.FourthChoiceOptionId == option.OptionId);
+                foreach (var choice in choices)
+                {
+                    _context.Choices.Remove(choice);
+                }
                 _context.Options.Remove(option);
                 await _context.SaveChangesAsync();
             }

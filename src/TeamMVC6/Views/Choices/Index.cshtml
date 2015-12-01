@@ -6,36 +6,87 @@
 
 <h2>Index</h2>
 
-<table class="table">
-    <tr>
-        <th>@Html.DisplayNameFor(model => model.StudentId)</th>
-        <th>@Html.DisplayNameFor(model => model.StudentFirstName)</th>
-        <th>@Html.DisplayNameFor(model => model.StudentLastName)</th>
-        <th>@Html.DisplayNameFor(model => model.YearTerm)</th>
-        <th>@Html.DisplayNameFor(model => model.SelectionDate)</th>
-        <th>@Html.DisplayNameFor(model => model.FirstChoiceOption)</th>
-        <th>@Html.DisplayNameFor(model => model.SecondChoiceOption)</th>
-        <th>@Html.DisplayNameFor(model => model.ThirdChoiceOption)</th>
-        <th>@Html.DisplayNameFor(model => model.FourthChoiceOption)</th>
-        <th></th>
-    </tr>
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>@Html.DisplayFor(modelItem => item.StudentId)</td>
-            <td>@Html.DisplayFor(modelItem => item.StudentFirstName)</td>
-            <td>@Html.DisplayFor(modelItem => item.StudentLastName)</td>
-            <td>@Html.DisplayFor(modelItem => item.YearTerm.Year)@Html.DisplayFor(modelItem => item.YearTerm.Term)</td>
-            <td>@Html.DisplayFor(modelItem => item.SelectionDate)</td>
-            <td>@Html.DisplayFor(modelItem => item.FirstChoiceOption.Title)</td>
-            <td>@Html.DisplayFor(modelItem => item.SecondChoiceOption.Title)</td>
-            <td>@Html.DisplayFor(modelItem => item.ThirdChoiceOption.Title)</td>
-            <td>@Html.DisplayFor(modelItem => item.FourthChoiceOption.Title)</td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ChoiceId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ChoiceId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ChoiceId">Delete</a>
-            </td>
-        </tr>
+<div id="container">
+    <label for="ddlYearTerms"><strong>Select a YearTerm</strong></label><br />
+    @Html.DropDownList("id", (IEnumerable<SelectListItem>)ViewBag.slItems, new { id = "ddlYearTerms" })
+    <br /><br />
+
+    <div id="dvChoiceResults">
+        @{ await Html.RenderPartialAsync("_IndexPartial", Model );}
+    </div>
+
+</div>  
+
+<div id="container2" style="min-width: 310px; height: 400px; max-width: 600px; margin-top: 50px; margin-left:20%"></div>
+
+<script>
+    var stats = [];
+</script>
+
+@foreach (var item in ViewBag.Options)
+{
+    <script>
+        stats.push({
+            name: "@item.Key",
+            y: @item.Value
+        });
+    </script>
+}
+
+@section Scripts{
+    <script type="text/javascript">
+    var chartThis = function(){
+            $('#container2').highcharts({
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                },
+                title: {
+                    text: 'Option Choices'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                            style: {
+                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Options',
+                    colorByPoint: true,
+                    data: stats
+                }]
+            });
+
     }
-</table>
+
+    function loadDependencies(f){
+        if(window.jQuery){
+            f();
+        }else{
+            setTimeout(function() {loadDependencies(f)}, 100);
+        }
+    }
+
+    loadDependencies(chartThis);
+
+    $(document).ready(function () {
+        $("#ddlYearTerms").change(function () {
+            var termId =  $("#ddlYearTerms").val();
+            $("#dvChoiceResults").load('@(Url.Action("GetChoices","Choices",null, null))?Id=' + termId);
+        });
+    });
+
+    </script>  
+}

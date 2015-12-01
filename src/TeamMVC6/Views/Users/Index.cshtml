@@ -1,0 +1,29 @@
+﻿@model IEnumerable<TeamMVC6.Models.ApplicationUser>
+
+@{ 
+    ViewBag.Title = "Manage Users";
+}
+
+<h2>Manage Users</h2>
+
+<table class="table">
+    <tr>
+        <th>@Html.DisplayNameFor(model => model.UserName)</th>
+        <th>@Html.DisplayNameFor(model => model.Email)</th>
+        <th>Lockout Enabled</th>
+    </tr>
+
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>@Html.DisplayFor(modelItem => user.UserName)</td>
+            <td>@Html.DisplayFor(modelItem => user.Email)</td>
+            <td>@Html.DisplayFor(modelItem => user.LockoutEnabled)</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@user.Id">Edit</a> | 
+                <a asp-action="Details" asp-route-id="@user.Id">Details</a>
+            </td>
+        </tr>
+    }
+
+</table>

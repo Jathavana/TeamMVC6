@@ -19,10 +19,11 @@ using TeamMVC6.Models;
 using TeamMVC6.Services;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
+using Microsoft.AspNet.Authorization;
 
 namespace TeamMVC6.Controllers
 {
-
+    [Authorize(Roles = "Admin")]
     public class YearTermsController : Controller
     {
         private OptionsContext _context { get; set; }
@@ -57,6 +58,17 @@ namespace TeamMVC6.Controllers
         {
             if (ModelState.IsValid)
             {
+
+                if (yearTerm.Year < DateTime.Now.Year)
+                {
+                    ModelState.AddModelError("", "Invalid Year.");
+                    ViewBag.yearForms = new SelectList(new List<Object> {
+                                        new { value = 10, text = "Spring" },
+                                        new { value = 20, text = "Summer/Fall" },
+                                        new { value = 30, text = "Winter" } },
+                                        "value", "text", 2);
+                    return View(yearTerm);
+                }
                 if (yearTerm.IsDefault == true)
                 {
                     var formerActiveYearTerm = (_context.YearTerms
@@ -66,7 +78,7 @@ namespace TeamMVC6.Controllers
                     formerActiveYearTerm.IsDefault = false;
                     await _context.SaveChangesAsync();
                 }
-
+                
                 var test = _context.YearTerms.Where(i => i.Year == yearTerm.Year && i.Term == yearTerm.Term).Any();
                 if (test)
                 {

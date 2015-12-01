@@ -1,16 +1,20 @@
-﻿using Microsoft.AspNet.Http;
+﻿using Microsoft.AspNet.Authorization;
+using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using Microsoft.Framework.Logging;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TeamMVC6.Models;
 
 namespace TeamMVC6.Controllers
 {
+    //[Authorize(Roles = "Admin")]
     public class ChoicesController : Controller 
     {
         public OptionsContext _context { get; set; }
@@ -24,8 +28,10 @@ namespace TeamMVC6.Controllers
         }
 
         // GET: Choices
+        [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
+
             var choices = _context
                 .Choices
                 .Include(y => y.YearTerm)
@@ -33,26 +39,101 @@ namespace TeamMVC6.Controllers
                 .Include(c => c.SecondChoiceOption)
                 .Include(c => c.ThirdChoiceOption)
                 .Include(c => c.FourthChoiceOption)
-                .Where(c => c.YearTermId == _context.YearTerms
-                .Where(y => y.IsDefault == true)
-                .Select(y => y.YearTermId)
-                .FirstOrDefault());
+                .Where(c => c.YearTermId == _context.YearTerms.Where(y => y.IsDefault == true).Select(y => y.YearTermId).FirstOrDefault());
 
-            return View(choices.ToList());
+            var allYearTerms = _context.YearTerms.Select(c => c.YearTermId);
+            List<object> yearTermList = new List<object>();
+            var defaultYearTerm = _context.YearTerms.Where(c => c.IsDefault == true).Select(c => c.YearTermId).FirstOrDefault();
+
+            foreach(var yearterm in allYearTerms)
+            {
+                var yearTermQuery = _context.YearTerms.Where(c => c.YearTermId == yearterm).FirstOrDefault();
+                var name = yearTermQuery.Year + " " 
+                    + (yearTermQuery.Term == 10 ? "Winter" : 
+                    yearTermQuery.Term == 20 ? "Spring/Summer" : 
+                    yearTermQuery.Term == 30 ? "Fall" : "Default");
+                yearTermList.Add(new
+                {
+                    Id = yearterm,
+                    Name = name
+                });
+            }
+            ViewBag.slItems = new SelectList(yearTermList, "Id", "Name" , defaultYearTerm);
+            ViewBag.Options = getOptionsData();
+            ViewBag.test = defaultYearTerm;
+            return View(choices);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public ActionResult GetChoices(int Id)
+        {
+      
+            var choices = _context
+                    .Choices
+                     .Include(y => y.YearTerm)
+                    .Include(c => c.FirstChoiceOption)
+                    .Include(c => c.FourthChoiceOption)
+                    .Include(c => c.SecondChoiceOption)
+                    .Include(c => c.ThirdChoiceOption)
+                    .Where(c => c.YearTermId == Id);
+            ViewBag.Options = getOptionsData(Id);
+
+            return PartialView("_IndexPartial", choices);
+            
+        }
+
+        public IDictionary<string, int> getOptionsData(int id = 0)
+        {
+            var currentId = 0;
+            if (id == 0)
+            {
+                currentId = _context.YearTerms.Where(y => y.IsDefault == true).Select(y => y.YearTermId).FirstOrDefault();
+            }
+            else
+            {
+                currentId = id;
+            }
+            Dictionary<string, int> data = new Dictionary<string, int>();
+            var availableOptions = _context.Options.Where(c => c.IsActive == true).Select(c => c.OptionId);
+            var availableOptionsTitles = _context.Options.Where(c => c.IsActive == true).Select(c => c.Title);
+            var sum = 0;
+            var count = 0;
+            int[] optionsList = availableOptions.ToArray();
+            string[] optionsTitles = availableOptionsTitles.ToArray();
+
+            foreach (var options in optionsList)
+            {
+                sum = 0;
+                sum += _context.Choices.Where(c => c.FirstChoiceOptionId == options).Where(c => c.YearTermId == currentId).Count();
+                sum += _context.Choices.Where(c => c.SecondChoiceOptionId == options).Where(c => c.YearTermId == currentId).Count();
+                sum += _context.Choices.Where(c => c.ThirdChoiceOptionId == options).Where(c => c.YearTermId == currentId).Count();
+                sum += _context.Choices.Where(c => c.FourthChoiceOptionId == options).Where(c => c.YearTermId == currentId).Count();
+                data.Add(optionsTitles[count], sum);
+                count++;
+            }
+
+            return data;
         }
 
         // GET: Choices/Create
+        [Authorize(Roles = "Student")]
+
         public ActionResult Create()
         {
+            Choice currentUser = new Choice();
+            currentUser.StudentId = User.GetUserName();
+
             ViewBag.FirstChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
             ViewBag.FourthChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
             ViewBag.SecondChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
             ViewBag.ThirdChoiceOptionId = new SelectList(_context.Options.Where(c => c.IsActive == true), "OptionId", "Title");
 
-            return View();
+            return View(currentUser);
         }
 
         // GET: Choices/Details
+        [Authorize(Roles = "Admin")]
         public ActionResult Details(int id)
         {
 
@@ -89,6 +170,7 @@ namespace TeamMVC6.Controllers
         // POST: Choices/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Student")]
         public async Task<ActionResult> Create(Choice choice)
         {
             var defaultTermId = _context.YearTerms.Where(c => c.IsDefault == true).First().YearTermId;
@@ -124,10 +206,11 @@ namespace TeamMVC6.Controllers
             _context.Choices.Add(choice);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Choices/Edit
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit(int id)
         {
             Choice choice = await FindChoiceAsync(id);
@@ -150,6 +233,7 @@ namespace TeamMVC6.Controllers
         // POST: Choices/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit(int id, Choice choice)
         {
             if (_context.YearTerms.Where(c => c.IsDefault).Count() != 0)
@@ -203,6 +287,7 @@ namespace TeamMVC6.Controllers
         // GET: Choices/Delete
         [HttpGet]
         [ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> ConfirmDelete(int id, bool? retry)
         {
             Choice choice = _context.Choices
@@ -224,6 +309,7 @@ namespace TeamMVC6.Controllers
         // POST: Choices/Delete
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int id)
         {
             try
