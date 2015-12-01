@@ -58,6 +58,7 @@ namespace TeamMVC6.Controllers
         {
             if (ModelState.IsValid)
             {
+
                 if (yearTerm.IsDefault == true)
                 {
                     var formerActiveYearTerm = (_context.YearTerms
@@ -67,7 +68,7 @@ namespace TeamMVC6.Controllers
                     formerActiveYearTerm.IsDefault = false;
                     await _context.SaveChangesAsync();
                 }
-
+                
                 var test = _context.YearTerms.Where(i => i.Year == yearTerm.Year && i.Term == yearTerm.Term).Any();
                 if (test)
                 {
